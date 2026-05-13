@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /
+
+# V.A.G.L.I.O.S — Central Intelligence Hub
+# vaglios.com — Private smart home gateway
+# Not indexed by search engines

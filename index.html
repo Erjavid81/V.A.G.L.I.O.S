@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000a14">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<title>V.A.G.L.I.O.S — Central Intelligence Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #00d4ff;
+    --primary-dim: rgba(0, 212, 255, 0.12);
+    --primary-glow: rgba(0, 212, 255, 0.6);
+    --secondary: #ff6b00;
+    --accent: #00ff88;
+    --danger: #ff2244;
+    --bg: #000a14;
+    --bg2: #000d1a;
+    --surface: rgba(0, 30, 60, 0.5);
+    --border: rgba(0, 212, 255, 0.2);
+    --text: #c8e8ff;
+    --text-dim: rgba(200, 232, 255, 0.45);
+    --font-display: 'Orbitron', monospace;
+    --font-body: 'Rajdhani', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    cursor: default;
+  }
+
+  /* ── CANVAS BACKGROUND ── */
+  #bg-canvas {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── SCANLINES ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,212,255,0.018) 2px,
+      rgba(0,212,255,0.018) 4px
+    );
+  }
+
+  /* ── VIGNETTE ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,5,15,0.85) 100%);
+  }
+
+  /* ── WRAPPER ── */
+  .wrapper {
+    position: relative; z-index: 2;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding: 0 16px 40px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    width: 100%; max-width: 1100px;
+    display: flex; flex-direction: column; align-items: center;
+    padding: clamp(24px,5vh,56px) 0 clamp(16px,3vh,32px);
+    position: relative;
+  }
+
+  .arc-reactor {
+    width: clamp(64px,10vw,96px);
+    height: clamp(64px,10vw,96px);
+    position: relative; margin-bottom: 20px;
+  }
+  .arc-reactor svg { width: 100%; height: 100%; }
+
+  .logo-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 4.5vw, 3rem);
+    font-weight: 900;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--primary);
+    text-shadow: 0 0 20px var(--primary-glow), 0 0 60px rgba(0,212,255,0.3);
+    animation: flicker 8s infinite;
+  }
+
+  .logo-sub {
+    font-family: var(--font-mono);
+    font-size: clamp(0.55rem, 1.5vw, 0.8rem);
+    color: var(--text-dim);
+    letter-spacing: 0.25em;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  .status-bar {
+    display: flex; gap: 24px; align-items: center;
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    flex-wrap: wrap; justify-content: center;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse-dot 2s ease-in-out infinite;
+    margin-right: 6px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%; max-width: 700px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.4;
+    margin: 4px 0 clamp(24px,4vh,44px);
+    position: relative;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    position: absolute; top: 50%;
+    transform: translateY(-50%);
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 8px var(--primary);
+  }
+  .divider::before { left: 0; }
+  .divider::after  { right: 0; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: clamp(16px,3vh,28px);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before, .section-label::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border));
+  }
+  .section-label::after {
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ── GRID ── */
+  .grid {
+    width: 100%; max-width: 1100px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: clamp(12px, 2vw, 20px);
+  }
+
+  /* ── CARD ── */
+  .card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: clamp(20px, 3vw, 28px);
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    cursor: pointer;
+    /* stagger via inline style */
+    opacity: 0;
+    animation: card-in 0.5s ease forwards;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.07), transparent);
+    transition: left 0.5s ease;
+    pointer-events: none;
+  }
+
+  .card:hover::after { left: 160%; }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 0 24px rgba(0,212,255,0.15), 0 8px 32px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,212,255,0.04);
+  }
+
+  /* accent colors per card */
+  .card[data-color="orange"]  { --c: var(--secondary); }
+  .card[data-color="green"]   { --c: var(--accent); }
+  .card[data-color="red"]     { --c: var(--danger); }
+  .card[data-color="cyan"]    { --c: var(--primary); }
+  .card[data-color="purple"]  { --c: #b48aff; }
+  .card[data-color="yellow"]  { --c: #ffd600; }
+  .card[data-color="teal"]    { --c: #00e5cc; }
+  .card[data-color="pink"]    { --c: #ff4daa; }
+
+  .card:hover { border-color: var(--c, var(--primary)); box-shadow: 0 0 28px color-mix(in srgb, var(--c, var(--primary)) 20%, transparent), 0 8px 32px rgba(0,0,0,0.5); }
+
+  .card-corner {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: var(--c, var(--primary));
+    border-style: solid;
+    opacity: 0.7;
+  }
+  .card-corner.tl { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+  .card-corner.br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+  .card-icon {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    filter: drop-shadow(0 0 10px var(--c, var(--primary)));
+    line-height: 1;
+  }
+
+  .card-id {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    color: var(--c, var(--primary));
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-size: clamp(0.78rem, 1.5vw, 0.88rem);
+    color: var(--text-dim);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .card-footer {
+    margin-top: auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,212,255,0.1);
+  }
+
+  .card-url {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--c, var(--primary));
+    opacity: 0.6;
+    letter-spacing: 0.05em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 75%;
+  }
+
+  .card-arrow {
+    width: 26px; height: 26px;
+    border: 1px solid var(--c, var(--primary));
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    color: var(--c, var(--primary));
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .card:hover .card-arrow { background: var(--c, var(--primary)); color: #000; }
+
+  .card-status-badge {
+    position: absolute; top: 10px; right: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.12em;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .badge-online  { color: var(--accent); background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); }
+  .badge-beta    { color: var(--secondary); background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.3); }
+  .badge-planned { color: var(--text-dim); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+
+  /* ── WIDE CARD (featured) ── */
+  .card-wide { grid-column: span 2; }
+  @media (max-width: 640px) { .card-wide { grid-column: span 1; } }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    margin-top: clamp(32px, 6vh, 64px);
+    width: 100%; max-width: 1100px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .footer-line {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-align: center;
+    opacity: 0.5;
+  }
+  .footer-bar {
+    width: 220px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.2;
+  }
+
+  /* ── CLOCK ── */
+  .live-clock {
+    font-family: var(--font-mono);
+    font-size: clamp(0.9rem, 2.5vw, 1.35rem);
+    color: var(--primary);
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 12px var(--primary-glow);
+    margin-top: 8px;
+  }
+
+  /* ── DEVICE BANNER ── */
+  .device-banner {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    opacity: 0.7;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes flicker {
+    0%,97%,99%,100% { opacity: 1; }
+    98% { opacity: 0.85; }
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
+    50%      { opacity: 0.4; box-shadow: 0 0 4px var(--accent); }
+  }
+
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes arc-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes arc-counter {
+    to { transform: rotate(-360deg); }
+  }
+  @keyframes arc-glow {
+    0%,100% { opacity: 0.9; }
+    50%     { opacity: 0.5; }
+  }
+
+  /* ── RADAR PING ── */
+  .radar-ping {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--primary);
+    pointer-events: none;
+    z-index: 0;
+    animation: radar-expand 4s ease-out infinite;
+  }
+  @keyframes radar-expand {
+    0%   { opacity: 0.6; box-shadow: 0 0 0 0 rgba(0,212,255,0.3); }
+    100% { opacity: 0; box-shadow: 0 0 0 340px transparent; }
+  }
+
+  /* ── MOBILE TWEAKS ── */
+  @media (max-width: 480px) {
+    .status-bar { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="radar-ping"></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header class="header">
+
+    <!-- Arc Reactor Logo -->
+    <div class="arc-reactor">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer rings -->
+        <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,212,255,0.25)" stroke-width="0.5"/>
+
+        <!-- Spinning ring 1 -->
+        <g style="transform-origin:50px 50px; animation: arc-spin 8s linear infinite">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(0,212,255,0.5)" stroke-width="1"
+            stroke-dasharray="12 60" stroke-linecap="round"/>
+        </g>
+        <!-- Counter ring -->
+        <g style="transform-origin:50px 50px; animation: arc-counter 5s linear infinite">
+          <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(0,212,255,0.4)" stroke-width="1"
+            stroke-dasharray="8 40" stroke-linecap="round"/>
+        </g>
+
+        <!-- Core -->
+        <circle cx="50" cy="50" r="22" fill="rgba(0,10,20,0.9)" stroke="rgba(0,212,255,0.6)" stroke-width="1"/>
+        <circle cx="50" cy="50" r="16" fill="rgba(0,30,60,0.8)"/>
+        <!-- Hex pattern -->
+        <polygon points="50,38 59,43 59,57 50,62 41,57 41,43"
+          fill="none" stroke="rgba(0,212,255,0.5)" stroke-width="1.2"/>
+        <!-- Center glow -->
+        <circle cx="50" cy="50" r="8" fill="rgba(0,212,255,0.15)"
+          style="animation: arc-glow 2s ease-in-out infinite"/>
+        <circle cx="50" cy="50" r="5" fill="rgba(0,212,255,0.7)"
+          style="animation: arc-glow 2s ease-in-out infinite 0.5s"/>
+
+        <!-- Connector ticks -->
+        <g stroke="rgba(0,212,255,0.4)" stroke-width="1">
+          <line x1="50" y1="4"  x2="50" y2="10"/>
+          <line x1="50" y1="90" x2="50" y2="96"/>
+          <line x1="4"  y1="50" x2="10" y2="50"/>
+          <line x1="90" y1="50" x2="96" y2="50"/>
+          <line x1="17" y1="17" x2="21" y2="21"/>
+          <line x1="83" y1="83" x2="79" y2="79"/>
+          <line x1="83" y1="17" x2="79" y2="21"/>
+          <line x1="17" y1="83" x2="21" y2="79"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="logo-text">V.A.G.L.I.O.S</div>
+    <div class="logo-sub">Versatile Automated Guardian &amp; Linked Intelligence Operations System</div>
+    <div class="live-clock" id="clock">--:--:--</div>
+    <div class="device-banner" id="device-banner">Rilevamento dispositivo...</div>
+
+    <div class="status-bar">
+      <span><span class="status-dot"></span>SISTEMA ONLINE</span>
+      <span>// RETE SICURA</span>
+      <span>// CLOUDFLARE TUNNEL ATTIVO</span>
+      <span>// NODE: VAGLIOS.COM</span>
+    </div>
+
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- PRIMARY MODULES -->
+  <div class="section-label" style="width:100%;max-width:1100px;">Moduli primari</div>
+
+  <div class="grid">
+
+    <!-- IA -->
+    <a class="card card-wide" href="https://ia.vaglios.com" target="_blank" rel="noopener"
+       data-color="cyan" style="animation-delay:0.05s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-online">ONLINE</span>
+      <div class="card-icon">🧠</div>
+      <div class="card-id">MOD-001 // INTELLIGENZA ARTIFICIALE</div>
+      <div class="card-title">Centro IA</div>
+      <div class="card-desc">Motore neurale centrale. Interfaccia con modelli di linguaggio avanzati, automazione cognitiva e assistente virtuale integrato per il controllo smart home.</div>
+      <div class="card-footer">
+        <span class="card-url">ia.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- HOME ASSISTANT -->
+    <a class="card" href="https://casa.vaglios.com" target="_blank" rel="noopener"
+       data-color="orange" style="animation-delay:0.10s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-online">ONLINE</span>
+      <div class="card-icon">🏠</div>
+      <div class="card-id">MOD-002 // DOMOTICA</div>
+      <div class="card-title">Home Assistant</div>
+      <div class="card-desc">Controllo centralizzato di luci, termostati, serrature, sensori e automazioni dell'intera abitazione.</div>
+      <div class="card-footer">
+        <span class="card-url">casa.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- TELECAMERE -->
+    <a class="card" href="https://telecamere.vaglios.com" target="_blank" rel="noopener"
+       data-color="red" style="animation-delay:0.15s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-online">ONLINE</span>
+      <div class="card-icon">📷</div>
+      <div class="card-id">MOD-003 // SORVEGLIANZA</div>
+      <div class="card-title">Sistema Telecamere</div>
+      <div class="card-desc">Feed live, registrazioni e rilevamento movimento. Sorveglianza perimetrale a 360° con archivio cloud sicuro.</div>
+      <div class="card-footer">
+        <span class="card-url">telecamere.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- SECONDARY MODULES -->
+  <div class="section-label" style="width:100%;max-width:1100px;margin-top:clamp(24px,4vh,40px);">Moduli secondari consigliati</div>
+
+  <div class="grid">
+
+    <!-- MEDIA -->
+    <a class="card" href="https://media.vaglios.com" target="_blank" rel="noopener"
+       data-color="purple" style="animation-delay:0.20s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-planned">PIANIFICATO</span>
+      <div class="card-icon">🎬</div>
+      <div class="card-id">MOD-004 // MEDIA SERVER</div>
+      <div class="card-title">Media Center</div>
+      <div class="card-desc">Jellyfin/Plex per streaming locale di film, serie e musica. Biblioteca multimediale privata senza abbonamenti.</div>
+      <div class="card-footer">
+        <span class="card-url">media.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- VPN / RETE -->
+    <a class="card" href="https://vpn.vaglios.com" target="_blank" rel="noopener"
+       data-color="green" style="animation-delay:0.25s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-planned">PIANIFICATO</span>
+      <div class="card-icon">🔐</div>
+      <div class="card-id">MOD-005 // RETE SICURA</div>
+      <div class="card-title">VPN &amp; Rete</div>
+      <div class="card-desc">WireGuard o Tailscale per accesso sicuro alla rete di casa da qualsiasi luogo nel mondo con crittografia end-to-end.</div>
+      <div class="card-footer">
+        <span class="card-url">vpn.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- FILE MANAGER -->
+    <a class="card" href="https://files.vaglios.com" target="_blank" rel="noopener"
+       data-color="yellow" style="animation-delay:0.30s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-planned">PIANIFICATO</span>
+      <div class="card-icon">☁️</div>
+      <div class="card-id">MOD-006 // STORAGE PRIVATO</div>
+      <div class="card-title">Cloud Privato</div>
+      <div class="card-desc">Nextcloud o Filebrowser per gestire documenti, foto e backup. Il tuo Google Drive, ma completamente tuo.</div>
+      <div class="card-footer">
+        <span class="card-url">files.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- MONITOR -->
+    <a class="card" href="https://monitor.vaglios.com" target="_blank" rel="noopener"
+       data-color="teal" style="animation-delay:0.35s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-beta">BETA</span>
+      <div class="card-icon">📊</div>
+      <div class="card-id">MOD-007 // DIAGNOSTICA</div>
+      <div class="card-title">System Monitor</div>
+      <div class="card-desc">Grafana + Uptime Kuma per monitoraggio real-time di CPU, RAM, rete e disponibilità di tutti i servizi con alert automatici.</div>
+      <div class="card-footer">
+        <span class="card-url">monitor.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- ENERGY -->
+    <a class="card" href="https://energia.vaglios.com" target="_blank" rel="noopener"
+       data-color="orange" style="animation-delay:0.40s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-planned">PIANIFICATO</span>
+      <div class="card-icon">⚡</div>
+      <div class="card-id">MOD-008 // ENERGIA</div>
+      <div class="card-title">Gestione Energia</div>
+      <div class="card-desc">Monitoraggio consumi elettrici, fotovoltaico e batterie. Ottimizzazione automatica dei carichi in base alle tariffe.</div>
+      <div class="card-footer">
+        <span class="card-url">energia.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <!-- ADMIN -->
+    <a class="card" href="https://admin.vaglios.com" target="_blank" rel="noopener"
+       data-color="pink" style="animation-delay:0.45s">
+      <div class="card-corner tl"></div>
+      <div class="card-corner br"></div>
+      <span class="card-status-badge badge-online">ONLINE</span>
+      <div class="card-icon">⚙️</div>
+      <div class="card-id">MOD-009 // AMMINISTRAZIONE</div>
+      <div class="card-title">Portainer / Admin</div>
+      <div class="card-desc">Gestione container Docker, configurazione server, log di sistema e aggiornamenti di tutti i microservizi attivi.</div>
+      <div class="card-footer">
+        <span class="card-url">admin.vaglios.com</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer">
+    <div class="footer-bar"></div>
+    <div class="footer-line">V.A.G.L.I.O.S — CENTRAL INTELLIGENCE HUB // VAGLIOS.COM</div>
+    <div class="footer-line">© 2025 — TUTTI I SISTEMI PROTETTI — CLOUDFLARE ZERO TRUST</div>
+    <div class="footer-bar"></div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── DEVICE DETECTION ──
+function detectDevice() {
+  const ua = navigator.userAgent;
+  const w = window.innerWidth;
+  let device = 'TERMINALE SCONOSCIUTO';
+  if (/iPad/.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua))) device = 'TABLET // IPAD RILEVATO';
+  else if (/iPhone/.test(ua)) device = 'MOBILE // IPHONE RILEVATO';
+  else if (/Android.*Mobile/.test(ua)) device = 'MOBILE // ANDROID RILEVATO';
+  else if (/Android/.test(ua)) device = 'TABLET // ANDROID RILEVATO';
+  else if (w >= 1440) device = 'DESKTOP // WORKSTATION RILEVATA';
+  else if (w >= 1024) device = 'LAPTOP // COLLEGAMENTO SICURO';
+  else device = 'DISPOSITIVO // CONNESSO';
+  document.getElementById('device-banner').textContent = `[ ${device} ]`;
+}
+detectDevice();
+window.addEventListener('resize', detectDevice);
+
+// ── CANVAS BACKGROUND: particle network ──
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], mouse = { x: -9999, y: -9999 };
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+const N = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 12000));
+
+function rand(a, b) { return a + Math.random() * (b - a); }
+
+for (let i = 0; i < N; i++) {
+  particles.push({
+    x: rand(0, window.innerWidth),
+    y: rand(0, window.innerHeight),
+    vx: rand(-0.18, 0.18),
+    vy: rand(-0.18, 0.18),
+    r: rand(1, 2.2),
+    alpha: rand(0.2, 0.7)
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid overlay
+  ctx.strokeStyle = 'rgba(0,212,255,0.025)';
+  ctx.lineWidth = 1;
+  const step = 60;
+  for (let x = 0; x < W; x += step) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += step) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Particles
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,212,255,${p.alpha})`;
+    ctx.fill();
+  });
+
+  // Connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < 130) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,212,255,${0.12 * (1 - d/130)})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    }
+    // Mouse connections
+    const dx = particles[i].x - mouse.x;
+    const dy = particles[i].y - mouse.y;
+    const d = Math.sqrt(dx*dx + dy*dy);
+    if (d < 160) {
+      ctx.beginPath();
+      ctx.moveTo(particles[i].x, particles[i].y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.strokeStyle = `rgba(0,212,255,${0.22 * (1 - d/160)})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ── TOUCH: mobile mouse equivalent ──
+window.addEventListener('touchmove', e => {
+  mouse.x = e.touches[0].clientX;
+  mouse.y = e.touches[0].clientY;
+}, { passive: true });
+window.addEventListener('touchend', () => {
+  mouse.x = -9999; mouse.y = -9999;
+}, { passive: true });
+</script>
+
+</body>
+</html>
