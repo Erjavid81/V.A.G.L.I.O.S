@@ -1,3 +1,4 @@
 # Cloudflare Pages — Redirects
 # Tutte le rotte non trovate tornano alla home (SPA fallback)
+ /index.html    /index.html    200
 /*    /index.html    200
