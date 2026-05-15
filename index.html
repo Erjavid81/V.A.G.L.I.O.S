@@ -87,12 +87,85 @@
     position: relative;
   }
 
-  .arc-reactor {
-    width: clamp(64px,10vw,96px);
-    height: clamp(64px,10vw,96px);
-    position: relative; margin-bottom: 20px;
+  /* ── JARVIS BANNER ── */
+  .jarvis-banner {
+    position: relative;
+    width: 100%;
+    max-width: clamp(320px, 80vw, 860px);
+    height: clamp(90px, 16vw, 160px);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .arc-reactor svg { width: 100%; height: 100%; }
+
+  .jarvis-banner canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  /* angoli decorativi */
+  .jarvis-banner::before,
+  .jarvis-banner::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border-color: rgba(0,212,255,0.7);
+    border-style: solid;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .jarvis-banner::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+  .jarvis-banner::after  { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+  .banner-corner-tr,
+  .banner-corner-bl {
+    position: absolute;
+    width: 18px; height: 18px;
+    border-color: rgba(0,212,255,0.7);
+    border-style: solid;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .banner-corner-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+  .banner-corner-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+
+  /* ID tag laterale */
+  .banner-tag {
+    position: absolute;
+    top: 50%; right: -1px;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.42rem;
+    letter-spacing: 0.18em;
+    color: rgba(0,212,255,0.5);
+    writing-mode: vertical-rl;
+    padding: 6px 3px;
+    border: 1px solid rgba(0,212,255,0.15);
+    border-left: none;
+    background: rgba(0,10,20,0.8);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .banner-tag-left {
+    position: absolute;
+    top: 50%; left: -1px;
+    transform: translateY(-50%) rotate(180deg);
+    font-family: var(--font-mono);
+    font-size: 0.42rem;
+    letter-spacing: 0.18em;
+    color: rgba(0,212,255,0.5);
+    writing-mode: vertical-rl;
+    padding: 6px 3px;
+    border: 1px solid rgba(0,212,255,0.15);
+    border-left: none;
+    background: rgba(0,10,20,0.8);
+    z-index: 3;
+    pointer-events: none;
+  }
 
   .logo-text {
     font-family: var(--font-display);
@@ -382,12 +455,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes arc-spin {
-    to { transform: rotate(360deg); }
-  }
-  @keyframes arc-counter {
-    to { transform: rotate(-360deg); }
-  }
   @keyframes arc-glow {
     0%,100% { opacity: 0.9; }
     50%     { opacity: 0.5; }
@@ -426,48 +493,13 @@
   <!-- HEADER -->
   <header class="header">
 
-    <!-- Arc Reactor Logo -->
-    <div class="arc-reactor">
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- Outer rings -->
-        <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
-        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,212,255,0.25)" stroke-width="0.5"/>
-
-        <!-- Spinning ring 1 -->
-        <g style="transform-origin:50px 50px; animation: arc-spin 8s linear infinite">
-          <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(0,212,255,0.5)" stroke-width="1"
-            stroke-dasharray="12 60" stroke-linecap="round"/>
-        </g>
-        <!-- Counter ring -->
-        <g style="transform-origin:50px 50px; animation: arc-counter 5s linear infinite">
-          <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(0,212,255,0.4)" stroke-width="1"
-            stroke-dasharray="8 40" stroke-linecap="round"/>
-        </g>
-
-        <!-- Core -->
-        <circle cx="50" cy="50" r="22" fill="rgba(0,10,20,0.9)" stroke="rgba(0,212,255,0.6)" stroke-width="1"/>
-        <circle cx="50" cy="50" r="16" fill="rgba(0,30,60,0.8)"/>
-        <!-- Hex pattern -->
-        <polygon points="50,38 59,43 59,57 50,62 41,57 41,43"
-          fill="none" stroke="rgba(0,212,255,0.5)" stroke-width="1.2"/>
-        <!-- Center glow -->
-        <circle cx="50" cy="50" r="8" fill="rgba(0,212,255,0.15)"
-          style="animation: arc-glow 2s ease-in-out infinite"/>
-        <circle cx="50" cy="50" r="5" fill="rgba(0,212,255,0.7)"
-          style="animation: arc-glow 2s ease-in-out infinite 0.5s"/>
-
-        <!-- Connector ticks -->
-        <g stroke="rgba(0,212,255,0.4)" stroke-width="1">
-          <line x1="50" y1="4"  x2="50" y2="10"/>
-          <line x1="50" y1="90" x2="50" y2="96"/>
-          <line x1="4"  y1="50" x2="10" y2="50"/>
-          <line x1="90" y1="50" x2="96" y2="50"/>
-          <line x1="17" y1="17" x2="21" y2="21"/>
-          <line x1="83" y1="83" x2="79" y2="79"/>
-          <line x1="83" y1="17" x2="79" y2="21"/>
-          <line x1="17" y1="83" x2="21" y2="79"/>
-        </g>
-      </svg>
+    <!-- JARVIS Banner Panel -->
+    <div class="jarvis-banner" id="jarvis-banner">
+      <canvas id="banner-canvas"></canvas>
+      <div class="banner-corner-tr"></div>
+      <div class="banner-corner-bl"></div>
+      <span class="banner-tag">ARC-REACTOR // MARK-VII // STARK-IND</span>
+      <span class="banner-tag-left">SYS-PWR // 3.2GW // STABLE</span>
     </div>
 
     <div class="logo-text">V.A.G.L.I.O'S</div>
@@ -684,7 +716,370 @@ function detectDevice() {
 detectDevice();
 window.addEventListener('resize', detectDevice);
 
-// ── CANVAS BACKGROUND: particle network ──
+// ══════════════════════════════════════════════
+// JARVIS BANNER CANVAS ENGINE
+// ══════════════════════════════════════════════
+(function() {
+  const bc = document.getElementById('banner-canvas');
+  const bx = bc.getContext('2d');
+  let BW, BH, CX, CY, R;
+  let t = 0;
+  let spin1 = 0, spin2 = 0, spin3 = 0;
+
+  // ── random effects queue ──
+  const effects = [];
+  function scheduleEffect() {
+    const delay = 2500 + Math.random() * 6000;
+    setTimeout(() => {
+      const type = Math.random();
+      if      (type < 0.28) effects.push({ type: 'sweep',   progress: 0, dir: Math.random() > 0.5 ? 1 : -1 });
+      else if (type < 0.50) effects.push({ type: 'pulse',   progress: 0 });
+      else if (type < 0.68) effects.push({ type: 'glitch',  progress: 0, frames: Math.floor(3 + Math.random() * 5) });
+      else if (type < 0.82) effects.push({ type: 'scan',    progress: 0 });
+      else if (type < 0.92) effects.push({ type: 'spark',   progress: 0, x: Math.random() });
+      else                  effects.push({ type: 'overload', progress: 0 });
+      scheduleEffect();
+    }, delay);
+  }
+  scheduleEffect();
+
+  function resizeBanner() {
+    const wrap = document.getElementById('jarvis-banner');
+    BW = wrap.offsetWidth;
+    BH = wrap.offsetHeight;
+    bc.width  = BW;
+    bc.height = BH;
+    CX = BW / 2;
+    CY = BH / 2;
+    R  = Math.min(BH * 0.42, BW * 0.14);
+  }
+  resizeBanner();
+  window.addEventListener('resize', resizeBanner);
+
+  // ── helpers ──
+  function circle(x, y, r, stroke, width, alpha, dash) {
+    bx.save();
+    bx.globalAlpha = alpha;
+    bx.strokeStyle = stroke;
+    bx.lineWidth   = width;
+    if (dash) bx.setLineDash(dash); else bx.setLineDash([]);
+    bx.beginPath();
+    bx.arc(x, y, r, 0, Math.PI * 2);
+    bx.stroke();
+    bx.restore();
+  }
+
+  function rotatedDash(x, y, r, angle, stroke, width, alpha, dash) {
+    bx.save();
+    bx.globalAlpha = alpha;
+    bx.strokeStyle = stroke;
+    bx.lineWidth   = width;
+    bx.setLineDash(dash);
+    bx.translate(x, y);
+    bx.rotate(angle);
+    bx.beginPath();
+    bx.arc(0, 0, r, 0, Math.PI * 2);
+    bx.stroke();
+    bx.restore();
+  }
+
+  function line(x1, y1, x2, y2, stroke, width, alpha) {
+    bx.save();
+    bx.globalAlpha = alpha;
+    bx.strokeStyle = stroke;
+    bx.lineWidth   = width;
+    bx.setLineDash([]);
+    bx.beginPath();
+    bx.moveTo(x1, y1); bx.lineTo(x2, y2);
+    bx.stroke();
+    bx.restore();
+  }
+
+  function drawHexPanel(x, y, r) {
+    // hexagon
+    bx.save();
+    bx.globalAlpha = 0.55;
+    bx.strokeStyle = '#00d4ff';
+    bx.lineWidth   = 1.2;
+    bx.setLineDash([]);
+    bx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = (Math.PI / 3) * i - Math.PI / 6;
+      const px = x + r * Math.cos(a);
+      const py = y + r * Math.sin(a);
+      i === 0 ? bx.moveTo(px, py) : bx.lineTo(px, py);
+    }
+    bx.closePath();
+    bx.stroke();
+    bx.restore();
+  }
+
+  function drawSidePanels(glitchOn) {
+    // left side panel — segmented bars
+    const lx = CX - R * 2.8;
+    const barW = Math.min(BW * 0.09, 60);
+    const barH = R * 0.28;
+    const cols = ['#00d4ff','#00ff88','#00d4ff'];
+    for (let i = 0; i < 5; i++) {
+      const by = CY - R + i * (R * 0.52);
+      const fill = 0.3 + Math.sin(t * 0.04 + i * 1.1) * 0.25;
+      const col  = cols[i % cols.length];
+      bx.save();
+      bx.globalAlpha = glitchOn ? Math.random() * 0.6 + 0.1 : 0.18;
+      bx.fillStyle   = col;
+      bx.fillRect(lx - barW, by, barW * fill, barH * 0.7);
+      bx.strokeStyle = col;
+      bx.lineWidth   = 0.5;
+      bx.globalAlpha = glitchOn ? Math.random() * 0.5 + 0.1 : 0.3;
+      bx.strokeRect(lx - barW, by, barW, barH * 0.7);
+      bx.restore();
+    }
+
+    // right side — data readout lines
+    const rx = CX + R * 2.8;
+    const labels = ['PWR','FRQ','ION','SHD','NET'];
+    const vals   = labels.map((_,i) => (65 + Math.sin(t*0.03 + i*0.9)*30).toFixed(0)+'%');
+    bx.save();
+    bx.font = `${Math.max(8, R*0.22)}px 'Share Tech Mono', monospace`;
+    bx.textAlign = 'left';
+    for (let i = 0; i < 5; i++) {
+      const ty = CY - R + i * (R * 0.52) + barH * 0.5;
+      bx.globalAlpha = glitchOn ? Math.random() * 0.7 : 0.5;
+      bx.fillStyle   = '#00d4ff';
+      bx.fillText(`${labels[i]} ${vals[i]}`, rx + 6, ty);
+    }
+    bx.restore();
+
+    // horizontal connector lines
+    for (let i = 0; i < 3; i++) {
+      const ly = CY + (i - 1) * R * 0.55;
+      const alpha = 0.12 + Math.sin(t * 0.02 + i) * 0.06;
+      line(CX - R * 1.05, ly, CX - R * 2.7, ly, '#00d4ff', 0.6, glitchOn ? Math.random() * 0.5 : alpha);
+      line(CX + R * 1.05, ly, CX + R * 2.7, ly, '#00d4ff', 0.6, glitchOn ? Math.random() * 0.5 : alpha);
+    }
+  }
+
+  function drawReactor(glitchOn, overloadOn) {
+    const glow = 0.6 + Math.sin(t * 0.05) * 0.2;
+    const baseCol = overloadOn ? '#ffffff' : '#00d4ff';
+    const glowCol = overloadOn ? 'rgba(255,200,100,0.8)' : `rgba(0,212,255,${glow})`;
+
+    // outer glow ring
+    const grad = bx.createRadialGradient(CX, CY, R * 0.8, CX, CY, R * 1.6);
+    grad.addColorStop(0, overloadOn ? 'rgba(255,150,0,0.15)' : 'rgba(0,212,255,0.12)');
+    grad.addColorStop(1, 'transparent');
+    bx.save();
+    bx.globalAlpha = glitchOn ? Math.random() * 0.4 : 1;
+    bx.fillStyle = grad;
+    bx.beginPath();
+    bx.arc(CX, CY, R * 1.6, 0, Math.PI * 2);
+    bx.fill();
+    bx.restore();
+
+    // rings
+    circle(CX, CY, R * 1.02, `rgba(0,212,255,0.12)`, 1, 1, []);
+    circle(CX, CY, R * 0.88, `rgba(0,212,255,0.2)`, 0.5, 1, []);
+    rotatedDash(CX, CY, R,      spin1,  baseCol, 1.2, glitchOn ? Math.random() * 0.7 : 0.6, [R*0.18, R*0.6]);
+    rotatedDash(CX, CY, R*0.82, spin2,  baseCol, 1,   glitchOn ? Math.random() * 0.6 : 0.45, [R*0.1, R*0.45]);
+    rotatedDash(CX, CY, R*0.65, spin3,  baseCol, 0.8, glitchOn ? Math.random() * 0.5 : 0.4, [R*0.08, R*0.28]);
+
+    // ticks (N S E W + diagonals)
+    const ticks = [0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4];
+    ticks.forEach(a => {
+      const ix = CX + Math.cos(a) * R * 0.88;
+      const iy = CY + Math.sin(a) * R * 0.88;
+      const ox = CX + Math.cos(a) * R * 1.0;
+      const oy = CY + Math.sin(a) * R * 1.0;
+      line(ix, iy, ox, oy, '#00d4ff', 1, glitchOn ? Math.random() * 0.7 : 0.5);
+    });
+
+    // core fill
+    bx.save();
+    const coreGrad = bx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.46);
+    coreGrad.addColorStop(0, overloadOn ? 'rgba(255,200,80,0.9)' : 'rgba(0,212,255,0.35)');
+    coreGrad.addColorStop(0.5, overloadOn ? 'rgba(255,100,0,0.3)' : 'rgba(0,30,60,0.85)');
+    coreGrad.addColorStop(1, 'rgba(0,5,15,0.95)');
+    bx.globalAlpha = glitchOn ? Math.random() * 0.4 + 0.6 : 1;
+    bx.fillStyle = coreGrad;
+    bx.beginPath();
+    bx.arc(CX, CY, R * 0.46, 0, Math.PI * 2);
+    bx.fill();
+    bx.restore();
+
+    // core ring
+    circle(CX, CY, R * 0.46, overloadOn ? 'rgba(255,180,0,0.8)' : 'rgba(0,212,255,0.7)', 1.2, glitchOn ? Math.random() * 0.5 + 0.5 : 1, []);
+
+    // hexagon
+    drawHexPanel(CX, CY, R * 0.28);
+
+    // center dot
+    bx.save();
+    const dotGrad = bx.createRadialGradient(CX, CY, 0, CX, CY, R * 0.18);
+    dotGrad.addColorStop(0, overloadOn ? '#fff' : '#00d4ff');
+    dotGrad.addColorStop(0.5, overloadOn ? 'rgba(255,180,0,0.8)' : 'rgba(0,212,255,0.6)');
+    dotGrad.addColorStop(1, 'transparent');
+    bx.globalAlpha = glitchOn ? Math.random() : (0.7 + Math.sin(t * 0.07) * 0.3);
+    bx.fillStyle = dotGrad;
+    bx.beginPath();
+    bx.arc(CX, CY, R * 0.18, 0, Math.PI * 2);
+    bx.fill();
+    bx.restore();
+  }
+
+  function drawBorderFrame(glitchOn) {
+    // main border
+    bx.save();
+    bx.globalAlpha = glitchOn ? Math.random() * 0.4 + 0.2 : 0.35;
+    bx.strokeStyle = '#00d4ff';
+    bx.lineWidth   = 1;
+    bx.setLineDash([]);
+    bx.strokeRect(1, 1, BW - 2, BH - 2);
+    bx.restore();
+
+    // inner subtle border
+    bx.save();
+    bx.globalAlpha = 0.1;
+    bx.strokeStyle = '#00d4ff';
+    bx.lineWidth   = 0.5;
+    bx.strokeRect(4, 4, BW - 8, BH - 8);
+    bx.restore();
+
+    // top center label
+    const label = '// STARK INDUSTRIES — ARC REACTOR MARK VII — POWER SYSTEMS NOMINAL //';
+    bx.save();
+    bx.font = `${Math.max(7, BH * 0.065)}px 'Share Tech Mono', monospace`;
+    bx.fillStyle   = 'rgba(0,212,255,0.4)';
+    bx.textAlign   = 'center';
+    bx.globalAlpha = glitchOn ? Math.random() * 0.5 + 0.1 : 1;
+    bx.fillText(label, BW / 2, BH * 0.1);
+    bx.restore();
+
+    // bottom status
+    const status = `OUTPUT: ${(3.1 + Math.sin(t*0.03)*0.15).toFixed(2)} GW  //  TEMP: ${(42 + Math.sin(t*0.04)*3).toFixed(1)}°C  //  EFFICIENCY: ${(98.2 + Math.sin(t*0.05)*1.5).toFixed(1)}%`;
+    bx.save();
+    bx.font = `${Math.max(6, BH * 0.058)}px 'Share Tech Mono', monospace`;
+    bx.fillStyle   = 'rgba(0,255,136,0.5)';
+    bx.textAlign   = 'center';
+    bx.globalAlpha = glitchOn ? Math.random() * 0.5 + 0.1 : 1;
+    bx.fillText(status, BW / 2, BH * 0.92);
+    bx.restore();
+  }
+
+  // ── main loop ──
+  function animateBanner() {
+    t++;
+    spin1 += 0.012;
+    spin2 -= 0.008;
+    spin3 += 0.018;
+
+    bx.clearRect(0, 0, BW, BH);
+
+    // background
+    const bgGrad = bx.createLinearGradient(0, 0, BW, BH);
+    bgGrad.addColorStop(0, 'rgba(0,8,18,0.97)');
+    bgGrad.addColorStop(0.5, 'rgba(0,14,30,0.97)');
+    bgGrad.addColorStop(1, 'rgba(0,8,18,0.97)');
+    bx.fillStyle = bgGrad;
+    bx.fillRect(0, 0, BW, BH);
+
+    // scanlines on banner
+    bx.save();
+    bx.globalAlpha = 0.04;
+    for (let y = 0; y < BH; y += 4) {
+      bx.fillStyle = 'rgba(0,212,255,1)';
+      bx.fillRect(0, y, BW, 2);
+    }
+    bx.restore();
+
+    // process active effects
+    let glitchOn = false, overloadOn = false;
+    for (let i = effects.length - 1; i >= 0; i--) {
+      const ef = effects[i];
+      ef.progress += 0.022;
+
+      if (ef.type === 'sweep') {
+        // light beam sweeping across
+        const xPos = ef.dir > 0
+          ? BW * ef.progress
+          : BW * (1 - ef.progress);
+        const alpha = Math.sin(ef.progress * Math.PI) * 0.18;
+        const sw = BH * 0.8;
+        const sweepGrad = bx.createLinearGradient(xPos - sw/2, 0, xPos + sw/2, 0);
+        sweepGrad.addColorStop(0, 'transparent');
+        sweepGrad.addColorStop(0.3, `rgba(0,212,255,${alpha})`);
+        sweepGrad.addColorStop(0.5, `rgba(180,240,255,${alpha * 1.6})`);
+        sweepGrad.addColorStop(0.7, `rgba(0,212,255,${alpha})`);
+        sweepGrad.addColorStop(1, 'transparent');
+        bx.save();
+        bx.globalAlpha = 1;
+        bx.fillStyle = sweepGrad;
+        bx.fillRect(0, 0, BW, BH);
+        bx.restore();
+        if (ef.progress >= 1) effects.splice(i, 1);
+      }
+      else if (ef.type === 'pulse') {
+        // ring expanding from center reactor
+        const pR = R * 1.2 + (R * 4) * ef.progress;
+        const alpha = (1 - ef.progress) * 0.5;
+        circle(CX, CY, pR, 'rgba(0,212,255,1)', 1.5, alpha, []);
+        if (ef.progress >= 1) effects.splice(i, 1);
+      }
+      else if (ef.type === 'glitch') {
+        glitchOn = true;
+        ef.frames--;
+        if (ef.frames <= 0) effects.splice(i, 1);
+      }
+      else if (ef.type === 'scan') {
+        // horizontal scan line moving top to bottom
+        const sy = BH * ef.progress;
+        const scanAlpha = Math.sin(ef.progress * Math.PI) * 0.6;
+        bx.save();
+        bx.globalAlpha = scanAlpha;
+        const scanGrad = bx.createLinearGradient(0, sy - 6, 0, sy + 6);
+        scanGrad.addColorStop(0, 'transparent');
+        scanGrad.addColorStop(0.5, 'rgba(0,255,200,0.8)');
+        scanGrad.addColorStop(1, 'transparent');
+        bx.fillStyle = scanGrad;
+        bx.fillRect(0, sy - 6, BW, 12);
+        bx.restore();
+        if (ef.progress >= 1) effects.splice(i, 1);
+      }
+      else if (ef.type === 'spark') {
+        // spark arc from reactor toward random edge
+        const targetX = ef.x * BW;
+        const alpha = Math.sin(ef.progress * Math.PI) * 0.8;
+        const cp1x = CX + (Math.random() - 0.5) * R * 3;
+        const cp1y = CY + (Math.random() - 0.5) * R * 2;
+        bx.save();
+        bx.globalAlpha = alpha;
+        bx.strokeStyle = `rgba(${Math.random() > 0.5 ? '0,255,136' : '0,212,255'},1)`;
+        bx.lineWidth   = 0.8;
+        bx.setLineDash([]);
+        bx.beginPath();
+        bx.moveTo(CX, CY);
+        bx.quadraticCurveTo(cp1x, cp1y, targetX, Math.random() * BH);
+        bx.stroke();
+        bx.restore();
+        if (ef.progress >= 1) effects.splice(i, 1);
+      }
+      else if (ef.type === 'overload') {
+        overloadOn = true;
+        if (ef.progress >= 1) effects.splice(i, 1);
+      }
+    }
+
+    drawSidePanels(glitchOn);
+    drawReactor(glitchOn, overloadOn);
+    drawBorderFrame(glitchOn);
+
+    requestAnimationFrame(animateBanner);
+  }
+  animateBanner();
+})();
+
+// ══════════════════════════════════════════════
+// BACKGROUND PARTICLE NETWORK
+// ══════════════════════════════════════════════
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 let W, H, particles = [], mouse = { x: -9999, y: -9999 };
@@ -698,87 +1093,48 @@ window.addEventListener('resize', resize);
 window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
 const N = Math.min(80, Math.floor(window.innerWidth * window.innerHeight / 12000));
-
 function rand(a, b) { return a + Math.random() * (b - a); }
-
 for (let i = 0; i < N; i++) {
-  particles.push({
-    x: rand(0, window.innerWidth),
-    y: rand(0, window.innerHeight),
-    vx: rand(-0.18, 0.18),
-    vy: rand(-0.18, 0.18),
-    r: rand(1, 2.2),
-    alpha: rand(0.2, 0.7)
-  });
+  particles.push({ x: rand(0, window.innerWidth), y: rand(0, window.innerHeight),
+    vx: rand(-0.18, 0.18), vy: rand(-0.18, 0.18), r: rand(1, 2.2), alpha: rand(0.2, 0.7) });
 }
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
-
-  // Grid overlay
   ctx.strokeStyle = 'rgba(0,212,255,0.025)';
   ctx.lineWidth = 1;
   const step = 60;
-  for (let x = 0; x < W; x += step) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-  }
-  for (let y = 0; y < H; y += step) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-  }
-
-  // Particles
+  for (let x = 0; x < W; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
   particles.forEach(p => {
     p.x += p.vx; p.y += p.vy;
     if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
     if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0,212,255,${p.alpha})`;
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,212,255,${p.alpha})`; ctx.fill();
   });
-
-  // Connections
   for (let i = 0; i < particles.length; i++) {
     for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
+      const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
       const d = Math.sqrt(dx*dx + dy*dy);
       if (d < 130) {
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(0,212,255,${0.12 * (1 - d/130)})`;
-        ctx.lineWidth = 0.6;
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,212,255,${0.12 * (1 - d/130)})`; ctx.lineWidth = 0.6; ctx.stroke();
       }
     }
-    // Mouse connections
-    const dx = particles[i].x - mouse.x;
-    const dy = particles[i].y - mouse.y;
+    const dx = particles[i].x - mouse.x, dy = particles[i].y - mouse.y;
     const d = Math.sqrt(dx*dx + dy*dy);
     if (d < 160) {
-      ctx.beginPath();
-      ctx.moveTo(particles[i].x, particles[i].y);
-      ctx.lineTo(mouse.x, mouse.y);
-      ctx.strokeStyle = `rgba(0,212,255,${0.22 * (1 - d/160)})`;
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(mouse.x, mouse.y);
+      ctx.strokeStyle = `rgba(0,212,255,${0.22 * (1 - d/160)})`; ctx.lineWidth = 0.8; ctx.stroke();
     }
   }
-
   requestAnimationFrame(draw);
 }
 draw();
 
-// ── TOUCH: mobile mouse equivalent ──
-window.addEventListener('touchmove', e => {
-  mouse.x = e.touches[0].clientX;
-  mouse.y = e.touches[0].clientY;
-}, { passive: true });
-window.addEventListener('touchend', () => {
-  mouse.x = -9999; mouse.y = -9999;
-}, { passive: true });
+window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, { passive: true });
+window.addEventListener('touchend', () => { mouse.x = -9999; mouse.y = -9999; }, { passive: true });
 </script>
 
 </body>
